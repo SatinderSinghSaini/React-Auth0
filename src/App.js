@@ -4,7 +4,9 @@ import Auth from "./auth/Auth";
 import Callback from "./Callback";
 import Home from "./Home";
 import Nav from "./Nav";
+import Private from "./Private";
 import Profile from "./Profile";
+import Public from "./Public";
 
 function App(props) {
   const navigate = useNavigate();
@@ -22,6 +24,13 @@ function App(props) {
             }
           />
           <Route path="/callback" element={<Callback auth={auth} />} />
+          <Route path="/public" element={<Public />} />
+          <Route
+            path="/private"
+            element={
+              auth.isAuthenticated() ? <Private auth={auth} /> : navigate("/")
+            }
+          />
         </Routes>
       </div>
     </>
