@@ -11,7 +11,7 @@ function App(props) {
   const [auth] = useState(new Auth(navigate));
   return (
     <>
-      <Nav />
+      <Nav auth={auth} />
       <div className="body">
         <Routes>
           <Route path="/" element={<Home auth={auth} />} />
