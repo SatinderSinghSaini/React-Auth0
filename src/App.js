@@ -15,7 +15,12 @@ function App(props) {
       <div className="body">
         <Routes>
           <Route path="/" element={<Home auth={auth} />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={
+              auth.isAuthenticated() ? <Profile auth={auth} /> : navigate("/")
+            }
+          />
           <Route path="/callback" element={<Callback auth={auth} />} />
         </Routes>
       </div>
