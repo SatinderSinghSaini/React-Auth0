@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Auth from "./auth/Auth";
 import Callback from "./Callback";
+import Courses from "./Courses";
 import Home from "./Home";
 import Nav from "./Nav";
 import Private from "./Private";
@@ -29,6 +30,16 @@ function App(props) {
             path="/private"
             element={
               auth.isAuthenticated() ? <Private auth={auth} /> : navigate("/")
+            }
+          />
+          <Route
+            path="/courses"
+            element={
+              auth.isAuthenticated() && auth.userHasScopes(["read:courses"]) ? (
+                <Courses auth={auth} />
+              ) : (
+                navigate("/")
+              )
             }
           />
         </Routes>

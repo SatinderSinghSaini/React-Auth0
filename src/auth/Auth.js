@@ -4,13 +4,14 @@ export default class Auth {
   constructor(navigate) {
     this.navigate = navigate;
     this.userProfile = null;
+    this.requestedScopes = "openid profile email read:courses";
     this.auth0 = new auth0.WebAuth({
       domain: process.env.REACT_APP_AUTH0_DOMAIN,
       clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
       redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
       audience: process.env.REACT_APP_AUTH0_AUDIENCE,
       responseType: "token id_token",
-      scope: "openid profile email",
+      scope: this.requestedScopes,
     });
   }
 
@@ -31,13 +32,17 @@ export default class Auth {
   };
 
   setSession = (authResult) => {
+    console.log(authResult);
     //set the time that the access token will expire
     const expireAt = JSON.stringify(
       authResult.expiresIn * 1000 + new Date().getTime()
     );
+
+    const scopes = authResult.scopes || this.requestedScopes || "";
     localStorage.setItem("access_token", authResult.accessToken);
     localStorage.setItem("identity_token", authResult.idToken);
     localStorage.setItem("expires_at", expireAt);
+    localStorage.setItem("scopes", JSON.stringify(scopes));
   };
 
   isAuthenticated = () => {
@@ -50,6 +55,7 @@ export default class Auth {
     localStorage.removeItem("access_token");
     localStorage.removeItem("identity_token");
     localStorage.removeItem("expires_at");
+    localStorage.removeItem("scopes");
     this.userProfile = null;
     //This will logout from auth0
     this.auth0.logout({
@@ -73,4 +79,11 @@ export default class Auth {
       cb(this.userProfile, err);
     });
   };
+
+  userHasScopes(scopes) {
+    const grantedScopes = (
+      JSON.parse(localStorage.getItem("scopes")) || ""
+    ).split(" ");
+    return scopes.every((scope) => grantedScopes.includes(scope));
+  }
 }

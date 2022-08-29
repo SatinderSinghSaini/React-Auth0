@@ -21,3 +21,8 @@ In Auth.js, passed audience propoerty for authorizing api calls with auth0
 Created Api via Node and Express
 Configured express to parse JWT
 Created Api endpoints: public(anyone can call) and private(login required)
+
+# Implemented 2 types of Authorization
+
+1. Scope Based: Implemented '/course' api
+2. Role Based: Implemented '/admin' api
