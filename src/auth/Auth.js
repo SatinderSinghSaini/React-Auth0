@@ -2,6 +2,12 @@ import auth0 from "auth0-js";
 
 const REDIRECT_TO_LOGIN = "redirect_to_login";
 
+//Storing tokens in memory
+let _idToken;
+let _accessToken;
+let _scopes;
+let _expiresAt;
+
 export default class Auth {
   constructor(navigate) {
     this.navigate = navigate;
@@ -38,31 +44,18 @@ export default class Auth {
   };
 
   setSession = (authResult) => {
-    console.log(authResult);
     //set the time that the access token will expire
-    const expireAt = JSON.stringify(
-      authResult.expiresIn * 1000 + new Date().getTime()
-    );
-
-    const scopes = authResult.scopes || this.requestedScopes || "";
-    localStorage.setItem("access_token", authResult.accessToken);
-    localStorage.setItem("identity_token", authResult.idToken);
-    localStorage.setItem("expires_at", expireAt);
-    localStorage.setItem("scopes", JSON.stringify(scopes));
+    _expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
+    _scopes = authResult.scopes || this.requestedScopes || "";
+    _accessToken = authResult.accessToken;
+    _idToken = authResult.idToken;
   };
 
   isAuthenticated = () => {
-    const expiresAt = localStorage.getItem("expires_at");
-    return new Date().getTime() < expiresAt;
+    return new Date().getTime() < _expiresAt;
   };
 
   logout = () => {
-    //This removes data from local
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("identity_token");
-    localStorage.removeItem("expires_at");
-    localStorage.removeItem("scopes");
-    this.userProfile = null;
     //This will logout from auth0
     this.auth0.logout({
       clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
@@ -71,11 +64,10 @@ export default class Auth {
   };
 
   getAccessToken = () => {
-    const accessToken = localStorage.getItem("access_token");
-    if (!accessToken) {
+    if (!_accessToken) {
       throw Error("No Access Token");
     }
-    return accessToken;
+    return _accessToken;
   };
 
   getUserInfo = (cb) => {
@@ -87,9 +79,17 @@ export default class Auth {
   };
 
   userHasScopes(scopes) {
-    const grantedScopes = (
-      JSON.parse(localStorage.getItem("scopes")) || ""
-    ).split(" ");
-    return scopes.every((scope) => grantedScopes.includes(scope));
+    return scopes.every((scope) => _scopes.includes(scope));
+  }
+
+  renewToken(cb) {
+    this.auth0.checkSession({}, (err, result) => {
+      if (err) {
+        console.log(`Error: ${err.error} - ${err.error_description}.`);
+      } else {
+        this.setSession(result);
+      }
+      if (cb) cb(err, result);
+    });
   }
 }

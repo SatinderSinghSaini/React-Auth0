@@ -29,6 +29,13 @@ Created Api endpoints: public(anyone can call) and private(login required)
 
 # Shared auth object to child components using React Context (AuthContext)
 
+# Implemented Silent Authentication
+
+Steps for Silent Authentication:
+
+1. Called renewToken method at the apps entry point to get the session details after every load.
+2. In auth0 application's settings set "Allowed Web Origins" settings with application url(http://localhost:3000)
+
 # Commands
 
 npm start: to run application
