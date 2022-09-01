@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AuthContext from "./AuthContext";
 
-export default function Private(props) {
+export default function Private() {
+    const auth = useContext(AuthContext);
   const [message, setMessage] = useState("");
   useEffect(() => {
     fetch("/private", {
-      headers: { Authorization: `Bearer ${props.auth.getAccessToken()}` },
+      headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
     })
       .then((response) => {
         if (response.ok) return response.json();

@@ -1,5 +1,7 @@
 import auth0 from "auth0-js";
 
+const REDIRECT_TO_LOGIN = "redirect_to_login";
+
 export default class Auth {
   constructor(navigate) {
     this.navigate = navigate;
@@ -16,13 +18,17 @@ export default class Auth {
   }
 
   login = () => {
+    localStorage.setItem(REDIRECT_TO_LOGIN, window.location.pathname);
     this.auth0.authorize();
   };
   handleAuthentication = () => {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
-        this.navigate("/");
+
+        const redirectTo = localStorage.getItem(REDIRECT_TO_LOGIN) || "/";
+        this.navigate(redirectTo);
+        localStorage.removeItem(REDIRECT_TO_LOGIN);
       } else if (err) {
         this.navigate("/");
         alert(`Error ${err.error}. Check the console for further details`);

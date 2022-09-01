@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import AuthContext from "./AuthContext";
 
 export default function Callback(props) {
+  const auth = useContext(AuthContext);
   const { hash } = useLocation();
   useEffect(() => {
     if (/access_token|id_token|error/.test(hash)) {
-      props.auth.handleAuthentication();
+      auth.handleAuthentication();
     } else {
       throw new Error("Invalid Callback URL.");
     }

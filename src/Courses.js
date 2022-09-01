@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AuthContext from "./AuthContext";
 
-export default function Courses(props) {
+export default function Courses() {
+  const auth = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
   useEffect(() => {
     ////Below code to check courses api. It is using Scope based Authorization
     fetch("/course", {
-      headers: { Authorization: `Bearer ${props.auth.getAccessToken()}` },
+      headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
     })
       .then((response) => {
         if (response.ok) return response.json();
@@ -17,7 +19,7 @@ export default function Courses(props) {
       .catch((err) => console.log(err));
     //Below code to check admin api. It is using Role based Authorization
     fetch("/admin", {
-      headers: { Authorization: `Bearer ${props.auth.getAccessToken()}` },
+      headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
     })
       .then((response) => {
         if (response.ok) return response.json();

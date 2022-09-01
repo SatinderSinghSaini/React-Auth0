@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import Auth from "./auth/Auth";
 import Callback from "./Callback";
 import Courses from "./Courses";
@@ -8,42 +8,46 @@ import Nav from "./Nav";
 import Private from "./Private";
 import Profile from "./Profile";
 import Public from "./Public";
+import AuthContext from "./AuthContext";
 
 function App(props) {
   const navigate = useNavigate();
   const [auth] = useState(new Auth(navigate));
   return (
     <>
-      <Nav auth={auth} />
-      <div className="body">
-        <Routes>
-          <Route path="/" element={<Home auth={auth} />} />
-          <Route
-            path="/profile"
-            element={
-              auth.isAuthenticated() ? <Profile auth={auth} /> : navigate("/")
-            }
-          />
-          <Route path="/callback" element={<Callback auth={auth} />} />
-          <Route path="/public" element={<Public />} />
-          <Route
-            path="/private"
-            element={
-              auth.isAuthenticated() ? <Private auth={auth} /> : navigate("/")
-            }
-          />
-          <Route
-            path="/courses"
-            element={
-              auth.isAuthenticated() && auth.userHasScopes(["read:courses"]) ? (
-                <Courses auth={auth} />
-              ) : (
-                navigate("/")
-              )
-            }
-          />
-        </Routes>
-      </div>
+      <AuthContext.Provider value={auth}>
+        <Nav />
+        <div className="body">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/profile"
+              element={
+                auth.isAuthenticated() ? <Profile /> : <Navigate to="/" />
+              }
+            />
+            <Route path="/callback" element={<Callback />} />
+            <Route path="/public" element={<Public />} />
+            <Route
+              path="/private"
+              element={
+                auth.isAuthenticated() ? <Private /> : <Navigate to="/" />
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                auth.isAuthenticated() &&
+                auth.userHasScopes(["read:courses"]) ? (
+                  <Courses />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+          </Routes>
+        </div>
+      </AuthContext.Provider>
     </>
   );
 }

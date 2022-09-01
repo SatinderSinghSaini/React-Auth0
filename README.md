@@ -26,3 +26,9 @@ Created Api endpoints: public(anyone can call) and private(login required)
 
 1. Scope Based: Implemented '/course' api
 2. Role Based: Implemented '/admin' api
+
+# Shared auth object to child components using React Context (AuthContext)
+
+# Commands
+
+npm start: to run application

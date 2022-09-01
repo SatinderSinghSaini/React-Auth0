@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import AuthContext from "./AuthContext";
 
 export default function Profile(props) {
-  const { getUserInfo } = props.auth;
+  const auth = useContext(AuthContext);
+  const { getUserInfo } = auth;
   const [user, setUser] = useState({
     profile: null,
     error: "",
