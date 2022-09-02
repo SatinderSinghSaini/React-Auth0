@@ -49,7 +49,7 @@ app.get("/private", checkJwt, (req, res) => {
 
 app.get("/admin", checkJwt, checkRole("admin"), (req, res) => {
   res.json({
-    message: "Hello from and Admin Api",
+    message: "Hello from Admin Api",
   });
 });
 

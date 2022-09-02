@@ -46,9 +46,15 @@ export default class Auth {
   setSession = (authResult) => {
     //set the time that the access token will expire
     _expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
-    _scopes = authResult.scopes || this.requestedScopes || "";
+    // If there is a value on the `scope` param from the authResult,
+    // use it to set scopes in the session for the user. Otherwise
+    // use the scopes as requested. If no scopes were requested,
+    // set it to nothing
+    _scopes = authResult.scope || this.requestedScopes || "";
     _accessToken = authResult.accessToken;
     _idToken = authResult.idToken;
+
+    this.scheduleTokenRenewal();
   };
 
   isAuthenticated = () => {
@@ -91,5 +97,10 @@ export default class Auth {
       }
       if (cb) cb(err, result);
     });
+  }
+
+  scheduleTokenRenewal() {
+    const delay = _expiresAt - Date.now();
+    if (delay > 0) setTimeout(() => this.renewToken(), delay);
   }
 }
