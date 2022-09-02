@@ -5,7 +5,7 @@ Run this command to install dependencies: npm install auth0-js auth0-lock expres
 
 # Configure Auth0
 
-We signedup for Auth0
+We signedup for Auth0 (https://manage.auth0.com/)
 key decisions:
 
 1.  OAuth-flow: implicit
